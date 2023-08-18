@@ -6,6 +6,12 @@ info:
 host: findemybackedcode.onrender.com
 schemes:
   - https
+securityDefinitions:
+  bearerAuth:   
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Enter the Bearer token in the format "Bearer <token>"
 paths:
   /auth/login:
     post:
@@ -73,7 +79,7 @@ paths:
           description: Server or Database Failure
           schema:
             $ref: '#/definitions/ErrorMessage'
-        '409':
+        '401':
           description: User already exists
           schema:
             $ref: '#/definitions/ErrorMessage'
@@ -81,7 +87,51 @@ paths:
           description: Invalid Request / Invalid Payload
           schema:
             $ref: '#/definitions/ErrorMessage'
+  /stock/getInvestementHistory:
+   get:
+      tags:
+      - Stocks
+      summary: Get Investment History
+      security:
+        - bearerAuth: []
+      description: |
+        Get the details of all stocks investements made by user till date.
+      responses:
+        '200':
+          description: Data Retrieved Successfully
+          schema:
+            $ref: '#/definitions/InvestmentHistoryModel'
+        '500':
+          description: Server or Database Failure
+          schema:
+            $ref: '#/definitions/ErrorMessage'
 definitions:
+  InvestmentHistoryModel:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/InvestmentData'
+  InvestmentData:
+    type: object
+    properties:
+      id:
+        type: integer
+      uid: 
+        type: integer
+      stockSymbol:
+        type: string
+      stockName:
+        type: string
+      perSharePrice:
+        type: number
+      numberOfShares: 
+        type: integer
   LoginCredentials:
     type: object
     properties:
