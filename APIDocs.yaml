@@ -73,7 +73,7 @@ paths:
           description: Server or Database Failure
           schema:
             $ref: '#/definitions/ErrorMessage'
-        '401':
+        '409':
           description: User already exists
           schema:
             $ref: '#/definitions/ErrorMessage'
