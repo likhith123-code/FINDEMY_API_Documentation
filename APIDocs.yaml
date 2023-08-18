@@ -1,0 +1,57 @@
+swagger: '2.0'
+info:
+  version: "1.0.1"
+  title: 'FINDEMY Web Application'
+  description: 'Web Application for Investment tracking and Metrics Visualizations'
+host: findemybackedcode.onrender.com
+schemes:
+  - https
+paths:
+  /auth/login:
+    post:
+      tags:
+      - User Auth
+      summary: User Login
+      description: |
+        User should provide email id and password. On successful authentication user get access token and refresh token.
+        
+        **Mandatory Fields:**
+            email
+            password
+      parameters:
+        - in: body
+          name: user_credentials
+          description: User credentials (email and password)
+          schema:
+            $ref: '#/definitions/UserCredentials'
+      responses:
+        '200':
+          description: User Logged In Successfully
+          schema:
+            $ref: '#/definitions/LoginSuccessResponse'
+          
+definitions:
+  UserCredentials:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+      - email
+      - password
+  LoginSuccessResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: object
+        properties:
+          accessToken:
+            type: string
+          refreshToken:
+            type: string
