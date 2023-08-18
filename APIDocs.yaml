@@ -13,7 +13,7 @@ paths:
       - User Auth
       summary: User Login
       description: |
-        User should provide email id and password. On successful authentication user get access token and refresh token.
+        User should provide email id and password. On successful authentication user gets userid, access token and refresh token.
         
         **Mandatory Fields:**
             email
@@ -23,15 +23,66 @@ paths:
           name: user_credentials
           description: User credentials (email and password)
           schema:
-            $ref: '#/definitions/UserCredentials'
+            $ref: '#/definitions/LoginCredentials'
       responses:
         '200':
           description: User Logged In Successfully
           schema:
             $ref: '#/definitions/LoginSuccessResponse'
-          
+        '500':
+          description: Server or Database Failure
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        '404':
+          description: User does not exists / Not found
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        '401':
+          description: Username or Password does not match
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        '400':
+          description: Invalid Request / Invalid Payload
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+  /auth/register:
+    post:
+      tags:
+      - User Auth
+      summary: User Registration
+      description: |
+        User should provide emailId, password, confirmPassword and phoneNumber. If all the details are valid and user does not exists, then a new user will be created.
+        
+        **Mandatory Fields:**
+            email
+            password
+            confirm_password
+            phone_number
+      parameters:
+        - in: body
+          name: registration_credentials
+          description: User credentials
+          schema:
+            $ref: '#/definitions/RegistrationCredentials'
+      responses:
+        '201':
+          description: User Registered Successfully
+          schema:
+            $ref: '#/definitions/RegistrationSuccessResponse'
+        '500':
+          description: Server or Database Failure
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        '401':
+          description: User already exists
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+        '400':
+          description: Invalid Request / Invalid Payload
+          schema:
+            $ref: '#/definitions/ErrorMessage'
 definitions:
-  UserCredentials:
+  LoginCredentials:
     type: object
     properties:
       email:
@@ -41,6 +92,22 @@ definitions:
     required:
       - email
       - password
+  RegistrationCredentials:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      confirm_password:
+        type: string
+      phone_number:
+        type: string
+    required:
+      - email
+      - password
+      - confirm_password
+      - phone_number
   LoginSuccessResponse:
     type: object
     properties:
@@ -54,4 +121,35 @@ definitions:
           accessToken:
             type: string
           refreshToken:
+            type: string  
+          id:
+            type: integer
+  RegistrationSuccessResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        type: object
+        properties:
+          id:
+            type: integer
+          email:
+            type: string  
+          password:
             type: string
+          phone_number:
+            type: string
+          created_at:
+            type: string
+          modified_at:
+            type: string
+  ErrorMessage:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
